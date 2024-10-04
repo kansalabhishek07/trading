@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        .content {
+            padding: 20px;
+            background: #fff;
+            margin-top: 20px;
+        }
+        .content h2 {
+            margin-top: 0;
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .content table, th, td {
+            border: 1px solid #ddd;
+        }
+        .content th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .content th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Trading Bot Dashboard</h1>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="content">
+            <h2>Portfolio</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Quantity</th>
+                        <th>Buy Price</th>
+                        <th>Current Price</th>
+                        <th>Profit/Loss</th>
+                    </tr>
+                </thead>
+                <tbody id="portfolio">
+                    <!-- Portfolio data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="content">
+            <h2>Trades</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Company</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody id="trades">
+                    <!-- Trades data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/api/portfolio');
+            const data = await response.json();
+            const portfolioTable = document.getElementById('portfolio');
+            portfolioTable.innerHTML = '';
+            data.portfolio.forEach(stock => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${stock.company}</td>
+                    <td>${stock.quantity}</td>
+                    <td>${stock.buyPrice}</td>
+                    <td>${stock.currentPrice}</td>
+                    <td>${stock.profitLoss}</td>
+                `;
+                portfolioTable.appendChild(row);
+            });
+
+            const tradesTable = document.getElementById('trades');
+            tradesTable.innerHTML = '';
+            data.trades.forEach(trade => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${trade.action}</td>
+                    <td>${trade.company}</td>
+                    <td>${trade.price}</td>
+                    <td>${trade.quantity}</td>
+                `;
+                tradesTable.appendChild(row);
+            });
+        }
+
+        setInterval(fetchData, 5000);
+    </script>
+</body>
+</html>
